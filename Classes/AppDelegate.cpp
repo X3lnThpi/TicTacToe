@@ -23,7 +23,8 @@
  ****************************************************************************/
 
 #include "AppDelegate.h"
-#include "HelloWorldScene.h"
+#include "MainMenuScene.h"
+#include "Definitions.h"
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -121,16 +122,16 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
         if ( 720 == screenSize.width || 1280 == screenSize.height )
             {
-                resDirOrders.push_back("HD1280");
+                resDirOrders.push_back(HD1280_RESOURSE_FOLDERPATH);
 
 
                 glview->setDesignResolutionSize(720, 1280, ResolutionPolicy::NO_BORDER);
                 director->setContentScaleFactor(1);
             }
 
-        else if ( 720 == screenSize.width || 1152 == screenSize.height )
+        else if ( 1080 == screenSize.width || 1920 == screenSize.height )
             {
-                resDirOrders.push_back("HDX");
+                resDirOrders.push_back(HD1920_RESOURSE_FOLDERPATH);
 
 
 
@@ -140,7 +141,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
         else
             {
-                resDirOrders.push_back("HD1280");
+                resDirOrders.push_back(HD1280_RESOURSE_FOLDERPATH);
 
                 glview->setDesignResolutionSize(720, 1280, ResolutionPolicy::NO_BORDER);
             }
@@ -151,7 +152,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = HelloWorld::createScene();
+    auto scene = MainMenu::createScene();
 
     // run
     director->runWithScene(scene);

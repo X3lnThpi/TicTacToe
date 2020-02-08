@@ -1,5 +1,9 @@
 APP_STL := c++_static
 
+ifndef NDK_ROOT
+include external/stlport/libstlport.mk
+endif
+
 APP_CPPFLAGS := -frtti -DCC_ENABLE_CHIPMUNK_INTEGRATION=1 -std=c++11 -fsigned-char -Wno-extern-c-compat
 APP_LDFLAGS := -latomic
 

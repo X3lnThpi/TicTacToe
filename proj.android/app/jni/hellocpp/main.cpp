@@ -25,6 +25,7 @@
 #include <memory>
 
 #include <android/log.h>
+#include "platform/android/jni/JniHelper.h"
 #include <jni.h>
 
 #include "AppDelegate.h"

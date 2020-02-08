@@ -27,24 +27,29 @@
 #include "Definitions.h"
 #include "extensions/cocos-ext.h"
 #include "ui/CocosGUI.h"
-
+#include "MainMenuScene.h"
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
 
 
 USING_NS_CC;
+using namespace CocosDenshion;
 
 
 
 Scene* SinglePlayer::createScene()
 {
+    CCLOG("SinglePlayer createScene");
+
     return SinglePlayer::create();
+
 }
 
 // Print useful error message instead of segfaulting when files are not there.
 static void problemLoading(const char* filename)
 {
     printf("Error while loading: %s\n", filename);
-    printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in HelloWorldScene.cpp\n");
+    printf("Depending on how you compiled you might have to add 'Resources/' in front of filenames in MainMenuScene.cpp\n");
 }
 
 // on "init" you need to initialize your instance
@@ -73,6 +78,10 @@ bool SinglePlayer::init()
     // add a label shows "Hello World"
     // create and initialize a label
 
+
+
+    auto audio = SimpleAudioEngine::getInstance();
+
     auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
     if (label == nullptr)
     {
@@ -89,10 +98,25 @@ bool SinglePlayer::init()
     }
 
 
+    auto bg = Sprite::create(GAME_BACKGROUND);
+    bg->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
+    this->addChild(bg);
+
+
+    ui::Button* backButton = ui::Button::create(BACK_BUTTON);
+    backButton->setPosition(Vec2(visibleSize.width * 0.18 + origin.x, visibleSize.height * 0.92+ origin.y ));
+    backButton->addTouchEventListener( CC_CALLBACK_0(SinglePlayer::backButton, this) );
+    this->addChild(backButton);
+
+
+
     //The Rectangular 3X3 grid
-    gridSprite = Sprite::create("Grid.png");
+    gridSprite = Sprite::create(GRID_BACKGROUND);
     gridSprite->setPosition(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 2));
     this->addChild(gridSprite);
+
+
+    gameState = STATE_PLACING_PIECE;
 
     InitGridRects( );
     InitGridPieces( );
@@ -106,7 +130,9 @@ bool SinglePlayer::init()
         }
 
 
-turn = X_PIECE;
+    turn = X_PIECE;
+    // set the background music and play it just once.
+    audio->playEffect(X_PIECE_SOUND, false, 1.0f, 1.0f, 1.0f);
 
 
         EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create( );
@@ -131,7 +157,7 @@ turn = X_PIECE;
 // called when the touch first begins
 bool SinglePlayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event)
 {
-    CCLOG("Touch is working dude");
+    CCLOG("Touch began dude");
     return true; // true if the function wants to swallow the touch
 }
 
@@ -139,7 +165,7 @@ bool SinglePlayer::onTouchBegan(cocos2d::Touch *touch, cocos2d::Event *event)
 // called when the user moves their finger
 void SinglePlayer::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event)
 {
-
+    CCLOG("Touch is moving dude");
 }
 
 
@@ -147,8 +173,11 @@ void SinglePlayer::onTouchMoved(cocos2d::Touch *touch, cocos2d::Event *event)
 void SinglePlayer::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event)
 {
 
-        CCLOG("Lets See");
-        CheckAndPlacePiece(touch);
+        CCLOG("Lets See dude");
+        if(gameState != STATE_WON)
+        {
+            CheckAndPlacePiece(touch);
+        }
 
 }
 
@@ -175,8 +204,29 @@ void SinglePlayer::menuCloseCallback(Ref* pSender)
 
 
 
+
+
 void SinglePlayer::InitGridRects( )
 {
+    float width = gridSprite->getBoundingBox().size.width / 3;
+    float height = gridSprite->getBoundingBox().size.height / 3;
+    float xOrigin = gridSprite->getBoundingBox( ).getMinX( );
+    float yOrigin = gridSprite->getBoundingBox( ).getMinY( );
+
+    for(int i=0;i<3;i++){
+        for (int j = 0; j < 3; j++) {
+            float x= xOrigin + (width * i) + width / 2;
+            float y = yOrigin + (height * j) + height / 2;
+            midPointOfGridSpaces[i][j] = {x,y};
+            //CCLOG("midPointOfGridSpaces: {%d}{%d}  === { %f }  { %f }", i, j,
+            //midPointOfGridSpaces[i][j].x, midPointOfGridSpaces[i][j].y);
+            //CCLOG("Ameer origin: { %f } , { %f }", xOrigin + (width * i) + width / 2,yOrigin + (height * j) + height / 2);
+            //CCLOG("x y origin: { %f } , { %f }", x,y);
+
+
+        }
+    }
+
     gridSpaces[0][0] = Rect(gridSprite->getBoundingBox( ).getMinX( ),
                             gridSprite->getBoundingBox( ).getMinY( ),
                             gridSprite->getBoundingBox().size.width / 3,
@@ -238,15 +288,17 @@ void SinglePlayer::InitGridRects( )
 
 void SinglePlayer::InitGridPieces( )
 {
+    //int k=1;
+    cocos2d::Color4F color = Color4F::RED;
+
     for ( int x = 0; x < 3; x++ )
     {
         for ( int y = 0; y < 3; y++ )
         {
-            gridPieces[x][y] = Sprite::create("X.png");
+            gridPieces[x][y] = Sprite::create(XPIECE);
             gridPieces[x][y]->setPosition( Vec2( gridSprite->getPositionX( ) + ( gridPieces[x][y]->getContentSize( ).width * ( x - 1 ) ), gridSprite->getPositionY( ) + ( gridPieces[x][y]->getContentSize( ).height * ( y - 1 ) ) ) );
-
-            gridPieces[x][y]->setVisible( false );
-            gridPieces[x][y]->setOpacity( 0 );
+            gridPieces[x][y]->setVisible( true );
+            gridPieces[x][y]->setOpacity( 100 );
             this->addChild( gridPieces[x][y] );
             CCLOG("Grid Pieces also initialized");
         }
@@ -256,6 +308,7 @@ void SinglePlayer::InitGridPieces( )
 
 void SinglePlayer::CheckAndPlacePiece( cocos2d::Touch *touch )
 {
+    gameState = STATE_PLACING_PIECE;
     Rect rect1 = gridSprite->getBoundingBox( );
     Point touchPoint = touch->getLocation( );
     for ( int x = 0; x < 3; x++ )
@@ -270,19 +323,14 @@ void SinglePlayer::CheckAndPlacePiece( cocos2d::Touch *touch )
 
 
                                 gridArray[x][y] = turn;
-                              if ( X_PIECE == turn )
-                                                 {
-                                                     gridPieces[x][y]->setTexture("X.png");
-                                                    // turn = O_PIECE;
-                                                 }
-
-                               else
-                                                  {
-                                                      gridPieces[x][y]->setTexture("O.png");
-                                                    //  turn = X_PIECE;
-                                                  }
-
-
+                              if ( X_PIECE == turn ){
+                                  gridPieces[x][y]->setTexture(XPIECE);
+                                  //turn = O_PIECE;
+                              }
+                              else{
+                                  gridPieces[x][y]->setTexture(OPIECE);
+                                  //turn = X_PIECE;
+                              }
                              gridPieces[x][y]->setVisible( true );
                              gridPieces[x][y]->setOpacity( 100 );
                              gridPieces[x][y]->runAction( Sequence::create( FadeIn::create( PIECE_FADE_IN_TIME ), CallFunc::create( std::bind( &SinglePlayer::CheckWin, this, x, y ) ), NULL ) );
@@ -326,14 +374,59 @@ void SinglePlayer::CheckWin( int x, int y )
 }
 
 
+void SinglePlayer::placeStrike(int i, int j, int typeOfStrike){
+
+    __String winningPieceStr;
+
+    if(typeOfStrike==LEFT_DIAGONAL_WIN){
+        winningPieceStr = LEFT_DIAGONAL_WIN_STRIKE;
+    } else if(typeOfStrike==RIGHT_DIAGONAL_WIN){
+        winningPieceStr = RIGHT_DIAGONAL_WIN_STRIKE;
+    } else if(typeOfStrike==HORIZONTAL_WIN){
+        winningPieceStr = HORIZONTAL_WIN_STRIKE;
+    } else if(typeOfStrike==VERTICLE_WIN){
+        winningPieceStr = VERTICLE_WIN_STRIKE;
+    }
+    //CCLOG("origin: { %d } , { %d } , {%d} , {%s}", i,j,typeOfStrike,winningPieceStr.getCString());
+    auto gridSprite1 = Sprite::create(winningPieceStr.getCString());
+    gridSprite1->setPosition(Vec2(midPointOfGridSpaces[i][j].x, midPointOfGridSpaces[i][j].y));
+    this->addChild(gridSprite1);
 
 
 
-void SinglePlayer::Check3PiecesForMatch( int x1, int y1, int x2, int y2, int x3, int y3 )
-{
-    if ( turn == gridArray[x1][y1] && turn == gridArray[x2][y2] && turn == gridArray[x3][y3] )
-    {
-        __String winningPieceStr;
+}
+
+
+
+void SinglePlayer::Check3PiecesForMatch( int x1, int y1, int x2, int y2, int x3, int y3 ) {
+    if (turn == gridArray[x1][y1] && turn == gridArray[x2][y2] && turn == gridArray[x3][y3]) {
+        gameState = STATE_WON;
+
+        int slope = 0;
+        if (x1 != x2 && y1 != y2) {
+            slope = (y2 - y1) / (x2 - x1);
+            if (slope == 1) {
+                slope = RIGHT_DIAGONAL_WIN;
+            } else if (slope == -1) {
+                slope = LEFT_DIAGONAL_WIN;
+            }
+        }
+        if (y1 == y2) {
+            //horizontal
+            slope = HORIZONTAL_WIN;
+        }
+        if (x1 == x2) {
+            slope = VERTICLE_WIN;
+            //verticle
+        }
+        placeStrike(x2, y2, slope);
+        //notify ui thread to not
+
+    }
+}
+
+
+/*        __String winningPieceStr;
 
         if ( O_PIECE == turn )
         {
@@ -346,7 +439,7 @@ void SinglePlayer::Check3PiecesForMatch( int x1, int y1, int x2, int y2, int x3,
 
         Sprite *winningPieces[3];
 
-        winningPieces[0] = Sprite::create( winningPieceStr.getCString( ) );
+        winningPieces[0] = Sprite::create( winningPieceStr.getCString() );
         winningPieces[0]->setPosition( gridPieces[x1][y1]->getPosition( ) );
         winningPieces[0]->setOpacity( 0 );
         this->addChild( winningPieces[0] );
@@ -361,8 +454,15 @@ void SinglePlayer::Check3PiecesForMatch( int x1, int y1, int x2, int y2, int x3,
 
         winningPieces[0]->runAction( FadeIn::create( PIECE_FADE_IN_TIME ) );
         winningPieces[1]->runAction( Sequence::create( DelayTime::create( PIECE_FADE_IN_TIME * 0.5 ), FadeIn::create( PIECE_FADE_IN_TIME ), NULL ) );
-        winningPieces[2]->runAction( Sequence::create( DelayTime::create( PIECE_FADE_IN_TIME * 1.5 ), FadeIn::create( PIECE_FADE_IN_TIME ), NULL ) );
+        winningPieces[2]->runAction( Sequence::create( DelayTime::create( PIECE_FADE_IN_TIME * 1.5 ), FadeIn::create( PIECE_FADE_IN_TIME ), NULL ) );*/
 
-        gameState = STATE_WON;
-    }
+
+//}
+
+
+void SinglePlayer::backButton(){
+    auto scene = MainMenu::createScene();
+    CCLOG("origin: { %d }", 12);
+    Director::getInstance()->pushScene(scene);
 }
+
