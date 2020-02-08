@@ -16,6 +16,9 @@
         <meta-data android:name="android.app.lib_name"
                    android:value="MyGame" />
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7467344290953936~9036442020"/>
 
         <!--<com.google.android.gms.ads.AdView-->
             <!--xmlns:ads="http://schemas.android.com/apk/res-auto"-->
@@ -25,12 +28,12 @@
             <!--android:layout_centerHorizontal="true"-->
             <!--android:layout_alignParentBottom="true"-->
             <!--ads:adSize="BANNER"-->
-            <!--ads:adUnitId="a-app-pub-7467344290953936/7256935420">-->
+            <!--ads:adUnitId="ca-app-pub-3940256099942544/6300978111">-->
         <!--</com.google.android.gms.ads.AdView>-->
 
-        <meta-data
-            android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-7467344290953936~9036442020"/>
+        <!--<meta-data-->
+            <!--android:name="com.google.android.gms.ads.APPLICATION_ID"-->
+            <!--android:value="ca-app-pub-7467344290953936~9036442020"/>-->
 
         <activity
             android:name="org.cocos2dx.cpp.AppActivity"

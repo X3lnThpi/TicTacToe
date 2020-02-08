@@ -58,4 +58,7 @@
 #define PIECE_FADE_IN_TIME 0.2
 
 
+#define X_PIECE_SOUND "Audio/WinSound.m4a"
+
+
 #endif //PROJ_ANDROID_DEFINITIONS_H

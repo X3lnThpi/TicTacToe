@@ -29,9 +29,11 @@
 #include "ui/CocosGUI.h"
 #include "MainMenuScene.h"
 #include "cocos2d.h"
+#include "SimpleAudioEngine.h"
 
 
 USING_NS_CC;
+using namespace CocosDenshion;
 
 
 
@@ -75,6 +77,10 @@ bool SinglePlayer::init()
 
     // add a label shows "Hello World"
     // create and initialize a label
+
+
+
+    auto audio = SimpleAudioEngine::getInstance();
 
     auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
     if (label == nullptr)
@@ -125,6 +131,8 @@ bool SinglePlayer::init()
 
 
     turn = X_PIECE;
+    // set the background music and play it just once.
+    audio->playEffect(X_PIECE_SOUND, false, 1.0f, 1.0f, 1.0f);
 
 
         EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create( );
