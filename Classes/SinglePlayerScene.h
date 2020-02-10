@@ -76,6 +76,13 @@ private:
         
         void backButton();
 
+        void playXSound();
+        void playOSound();
+        void playWinSound();
+
+        void reloadGame();
+        void gameOver();
+
         void placeStrike(int i, int j, int typeOfStrike);
 
         cocos2d::Sprite *gridSprite;

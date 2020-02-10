@@ -27,6 +27,8 @@
 #define VERTICLE_WIN_STRIKE "vertical-strike.png"
 #define LEFT_DIAGONAL_WIN_STRIKE "left-diagonal-strike.png"
 #define RIGHT_DIAGONAL_WIN_STRIKE "right-diagonal-strike.png"
+#define HOME "Home.png"
+#define RELOAD "Reload.png"
 #define HD1280_RESOURSE_FOLDERPATH "HD1280"
 #define HD1920_RESOURSE_FOLDERPATH "HD1920"
 #define HDX_RESOURSE_FOLDERPATH "HDX"
@@ -59,6 +61,7 @@
 
 
 #define X_PIECE_SOUND "Audio/WinSound.m4a"
-
+#define Y_PIECE_SOUND "Audio/OSound.m4a"
+#define WIN_SOUND "Audio/WinSound.m4a"
 
 #endif //PROJ_ANDROID_DEFINITIONS_H
