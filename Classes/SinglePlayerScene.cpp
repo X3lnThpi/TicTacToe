@@ -360,6 +360,23 @@ void SinglePlayer::CheckWin( int x, int y )
 
     int emptyNum = 9;
 
+    for ( int x = 0; x < 3; x++ )
+    {
+        for ( int y = 0; y < 3; y++ )
+        {
+            if ( EMPTY_PIECE != gridArray[x][y] )
+            {
+                emptyNum--;
+            }
+        }
+    }
+
+    // check if the game is a draw
+    if ( 0 == emptyNum )
+    {
+        gameState = STATE_DRAW;
+        gameOver();
+    }
 
     // check who's current turn it is and switch
     if ( X_PIECE == turn )
@@ -376,12 +393,7 @@ void SinglePlayer::CheckWin( int x, int y )
         gameState = STATE_PLAYING;
     }
 
-    // check if the game is a draw
-    if ( 0 == emptyNum )
-    {
-        gameState = STATE_DRAW;
-        gameOver();
-    }
+
 }
 
 
