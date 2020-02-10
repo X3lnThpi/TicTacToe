@@ -49,8 +49,8 @@ public class AppActivity extends Cocos2dxActivity {
     private FirebaseAnalytics mFirebaseAnalytics;
     private AdView adView;
     private AdView mAdView;
-    //private static final String AD_UNIT_ID = "ca-app-pub-7467344290953936/4394143957";
-    private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
+    private static final String AD_UNIT_ID = "ca-app-pub-7467344290953936/4394143957";
+   // private static final String AD_UNIT_ID = "ca-app-pub-3940256099942544/6300978111";
 
 
 
