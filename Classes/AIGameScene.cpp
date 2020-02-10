@@ -285,6 +285,7 @@ void AIGame::CheckWin( int x, int y )
     if ( 0 == emptyNum )
     {
         gameState = STATE_DRAW;
+        gameOver();
     }
 
     std::cout << gameState << std::endl;

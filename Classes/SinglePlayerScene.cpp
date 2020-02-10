@@ -357,6 +357,10 @@ void SinglePlayer::CheckWin( int x, int y )
     Check3PiecesForMatch( 0, 0, 1, 1, 2, 2);
     Check3PiecesForMatch( 0, 2, 1, 1, 2, 0);
 
+
+    int emptyNum = 9;
+
+
     // check who's current turn it is and switch
     if ( X_PIECE == turn )
     {
@@ -370,6 +374,13 @@ void SinglePlayer::CheckWin( int x, int y )
     if ( STATE_PLACING_PIECE == gameState )
     {
         gameState = STATE_PLAYING;
+    }
+
+    // check if the game is a draw
+    if ( 0 == emptyNum )
+    {
+        gameState = STATE_DRAW;
+        gameOver();
     }
 }
 
