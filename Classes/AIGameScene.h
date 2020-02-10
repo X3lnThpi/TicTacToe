@@ -32,7 +32,11 @@
 
 
 
-
+struct CoOrdinateAI
+{
+    float x;
+    float y;
+};
 
 class AIGame : public cocos2d::Scene
 {
@@ -70,11 +74,20 @@ private:
         void Check3PiecesForMatch( int x1, int y1, int x2, int y2, int x3, int y3, int pieceToCheck );
 
         void backButton();
+    void placeStrike(int i, int j, int typeOfStrike);
+    void playXSound();
+    void playOSound();
+    void playWinSound();
+
+    void reloadGame();
+    void gameOver();
 
         cocos2d::Sprite *gridSprite;
         cocos2d::Rect gridSpaces[3][3];
         cocos2d::Sprite *gridPieces[3][3];
-        int gridArray[3][3];
+    CoOrdinateAI midPointOfGridSpaces[3][3];
+
+    int gridArray[3][3];
 
         int turn;
         int gameState;

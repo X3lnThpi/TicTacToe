@@ -80,7 +80,6 @@ bool SinglePlayer::init()
 
 
 
-    auto audio = SimpleAudioEngine::getInstance();
 
     auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
     if (label == nullptr)
@@ -131,8 +130,7 @@ bool SinglePlayer::init()
 
 
     turn = X_PIECE;
-    // set the background music and play it just once.
-    audio->playEffect(X_PIECE_SOUND, false, 1.0f, 1.0f, 1.0f);
+
 
 
         EventListenerTouchOneByOne *listener = EventListenerTouchOneByOne::create( );
@@ -297,7 +295,7 @@ void SinglePlayer::InitGridPieces( )
         {
             gridPieces[x][y] = Sprite::create(XPIECE);
             gridPieces[x][y]->setPosition( Vec2( gridSprite->getPositionX( ) + ( gridPieces[x][y]->getContentSize( ).width * ( x - 1 ) ), gridSprite->getPositionY( ) + ( gridPieces[x][y]->getContentSize( ).height * ( y - 1 ) ) ) );
-            gridPieces[x][y]->setVisible( true );
+            gridPieces[x][y]->setVisible( false );
             gridPieces[x][y]->setOpacity( 100 );
             this->addChild( gridPieces[x][y] );
             CCLOG("Grid Pieces also initialized");
@@ -324,10 +322,12 @@ void SinglePlayer::CheckAndPlacePiece( cocos2d::Touch *touch )
 
                                 gridArray[x][y] = turn;
                               if ( X_PIECE == turn ){
+                                  playOSound();
                                   gridPieces[x][y]->setTexture(XPIECE);
                                   //turn = O_PIECE;
                               }
                               else{
+                                  playXSound();
                                   gridPieces[x][y]->setTexture(OPIECE);
                                   //turn = X_PIECE;
                               }
@@ -391,6 +391,8 @@ void SinglePlayer::placeStrike(int i, int j, int typeOfStrike){
     auto gridSprite1 = Sprite::create(winningPieceStr.getCString());
     gridSprite1->setPosition(Vec2(midPointOfGridSpaces[i][j].x, midPointOfGridSpaces[i][j].y));
     this->addChild(gridSprite1);
+    playWinSound();
+    gameOver();
 
 
 
@@ -423,6 +425,7 @@ void SinglePlayer::Check3PiecesForMatch( int x1, int y1, int x2, int y2, int x3,
         //notify ui thread to not
 
     }
+
 }
 
 
@@ -466,3 +469,50 @@ void SinglePlayer::backButton(){
     Director::getInstance()->pushScene(scene);
 }
 
+void SinglePlayer::reloadGame(){
+    auto scene = SinglePlayer::createScene();
+    CCLOG("origin: { %d }", 12);
+    Director::getInstance()->pushScene(scene);
+}
+
+
+void SinglePlayer::gameOver(){
+
+
+    auto visibleSize = Director::getInstance()->getVisibleSize();
+    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+    ui::Button* HomeButton = ui::Button::create(HOME);
+    HomeButton->setPosition(Vec2(visibleSize.width * 0.38 + origin.x, visibleSize.height * 0.22+ origin.y ));
+    HomeButton->addTouchEventListener( CC_CALLBACK_0(SinglePlayer::backButton, this) );
+    this->addChild(HomeButton);
+
+
+    ui::Button* reloadButton = ui::Button::create(RELOAD);
+    reloadButton->setPosition(Vec2(visibleSize.width * 0.68 + origin.x, visibleSize.height * 0.22+ origin.y ));
+    reloadButton->addTouchEventListener( CC_CALLBACK_0(SinglePlayer::reloadGame, this) );
+    this->addChild(reloadButton);
+
+}
+
+void SinglePlayer::playXSound(){
+
+    auto audio = SimpleAudioEngine::getInstance();
+    audio->setEffectsVolume(UserDefault::getInstance()->getFloatForKey("soundsVolume", 1.0f));
+    // set the background music and play it just once.
+    audio->playEffect(X_PIECE_SOUND, false, 1.0f, 1.0f, 1.0f);
+}
+
+void SinglePlayer::playOSound(){
+    auto audio = SimpleAudioEngine::getInstance();
+    audio->setEffectsVolume(UserDefault::getInstance()->getFloatForKey("soundsVolume", 1.0f));
+    // set the background music and play it just once.
+    audio->playEffect(Y_PIECE_SOUND, false, 1.0f, 1.0f, 1.0f);
+}
+
+void SinglePlayer::playWinSound(){
+    auto audio = SimpleAudioEngine::getInstance();
+    audio->setEffectsVolume(UserDefault::getInstance()->getFloatForKey("soundsVolume", 1.0f));
+    // set the background music and play it just once.
+    audio->playEffect(WIN_SOUND, false, 1.0f, 1.0f, 1.0f);
+}
